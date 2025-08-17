@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "monitoring": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-datadog"],
+      "env": {}
+    },
+    "pagerduty": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-pagerduty"],
+      "env": {}
+    },
+    "kubernetes": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-kubernetes"],
+      "env": {}
+    }
+  }
+}

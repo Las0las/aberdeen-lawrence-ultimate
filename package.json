@@ -1,0 +1,14 @@
+{
+  "name": "aberdeen-lawrence-ultimate",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "metrics:print": "node -e \"import('./app/api/agents/metrics/registry.js').then(m=>m.dump())\""
+  },
+  "dependencies": {
+    "@anthropic-ai/claude-code": "^0.0.1",
+    "pino": "^8.15.1",
+    "prom-client": "^14.2.0",
+    "zod": "^3.22.2"
+  }
+}

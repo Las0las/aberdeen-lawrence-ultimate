@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "slack": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-slack"],
+      "env": { "SLACK_TOKEN": "${SLACK_TOKEN}" }
+    },
+    "jira": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-jira"],
+      "env": { "JIRA_TOKEN": "${JIRA_TOKEN}" }
+    },
+    "database": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-postgres"],
+      "env": { "DB_CONNECTION_STRING": "${DB_CONNECTION_STRING}" }
+    }
+  }
+}
