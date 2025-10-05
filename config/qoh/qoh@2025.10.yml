@@ -1,0 +1,32 @@
+# Quality of Hire formulas with robust statistical methods
+version: "2025.10"
+description: "Quality of Hire calculation using rank-based normalization"
+
+eng:
+  method: "rank_normalized" # Avoid z-score assumptions
+  components:
+    perfScore: 0.30
+    retained12m: 0.20
+    rampDays_invrank: 0.15 # Inverse rank for "lower is better"
+    quality_rank: 0.15
+    managerCsat: 0.20
+  min_sample_size: 20
+  
+consulting:
+  method: "rank_normalized"
+  components:
+    utilization: 0.35
+    marginPct: 0.25
+    renewed: 0.20
+    timeToBill_invrank: 0.10
+    clientNps: 0.10
+  min_sample_size: 15
+
+ops:
+  method: "rank_normalized"
+  components:
+    efficiency_score: 0.40
+    retained12m: 0.25
+    rampDays_invrank: 0.20
+    teamSatisfaction: 0.15
+  min_sample_size: 10

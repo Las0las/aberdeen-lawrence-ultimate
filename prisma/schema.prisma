@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model InterviewPrediction {
+  id           String   @id @default(cuid())
+  candidateId  String
+  reqId        String
+  stage        String   // 'screen'|'tech'|'loop'
+  pSuccess     Float    @db.DoublePrecision
+  confidence   Float    @db.DoublePrecision
+  topFactors   String[] // TEXT[]
+  createdAt    DateTime @default(now())
+  groupKey     String?  // fairness cohort
+  modelVersion String   @default("v1.0")
+  
+  @@index([reqId, stage])
+  @@index([createdAt])
+  @@index([groupKey])
+}
+
+model HireOutcome {
+  personId     String   @id
+  roleFamily   String   // 'eng'|'consulting'|'ops'
+  startDate    DateTime
+  rampDays     Int?
+  retained12m  Boolean?
+  perfScore    Float?   @db.DoublePrecision // 0-1 normalized
+  utilization  Float?   @db.DoublePrecision
+  marginPct    Float?   @db.DoublePrecision
+  clientNps    Int?
+  renewed      Boolean?
+  updatedAt    DateTime @updatedAt
+  qohVersion   String   @default("2025.10")
+  
+  @@index([roleFamily, startDate])
+  @@index([startDate])
+}
+
+model BiasEvent {
+  id          String   @id @default(cuid())
+  sessionId   String
+  severity    Int      // 1-5 scale
+  eventType   String   // 'language_bias'|'demographic_bias'|'cognitive_bias'
+  details     Json
+  createdAt   DateTime @default(now())
+  adjudicated Boolean  @default(false)
+  adjudicator String?
+  resolution  String?
+  
+  @@index([severity, adjudicated])
+  @@index([createdAt])
+}
+
+model FairnessGateRun {
+  id             String   @id @default(cuid())
+  window         String   // e.g., '2025-W40'
+  cohortSize     Int
+  airMin         Float    @db.DoublePrecision
+  tprGapMax      Float    @db.DoublePrecision
+  fprGapMax      Float    @db.DoublePrecision
+  calibParityMax Float    @db.DoublePrecision
+  status         String   // 'pass'|'fail'|'insufficient_data'
+  findings       Json
+  pValue         Float?   @db.DoublePrecision // Bonferroni corrected
+  effectSize     Float?   @db.DoublePrecision
+  createdAt      DateTime @default(now())
+  
+  @@index([window, status])
+  @@unique([window])
+}
+
+model Reservation {
+  id          String   @id @default(cuid())
+  slotId      String   @unique
+  candidateId String
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+  metadata    Json?    // Store conflict reasons, alternatives
+  
+  @@index([expiresAt])
+  @@index([candidateId])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String
+  action    String
+  resource  String
+  details   Json
+  signature String   // HMAC for tamper detection
+  createdAt DateTime @default(now())
+  
+  @@index([userId, createdAt])
+  @@index([action, createdAt])
+}
