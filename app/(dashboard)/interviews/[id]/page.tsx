@@ -62,7 +62,7 @@ export default async function InterviewPage({ params }: InterviewPageProps) {
         <div>
           <label className="text-sm font-medium text-gray-600">Top Factors</label>
           <ul className="mt-2 space-y-1">
-            {prediction.topFactors.map((factor, idx) => (
+            {prediction.topFactors.map((factor: string, idx: number) => (
               <li key={idx} className="flex items-center">
                 <span className="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-sm mr-2">
                   {idx + 1}

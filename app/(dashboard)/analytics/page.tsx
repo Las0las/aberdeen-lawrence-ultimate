@@ -7,7 +7,7 @@ export default async function AnalyticsPage() {
   });
 
   const latestGate = fairnessGates[0];
-  const passRate = fairnessGates.filter(g => g.status === 'pass').length / fairnessGates.length;
+  const passRate = fairnessGates.filter((g: any) => g.status === 'pass').length / fairnessGates.length;
 
   return (
     <div className="container mx-auto p-8">
@@ -72,11 +72,11 @@ export default async function AnalyticsPage() {
       <div className="bg-white rounded-lg shadow p-6">
         <h2 className="text-xl font-semibold mb-4">Historical Fairness Gate Results</h2>
         <p className="text-sm text-gray-600 mb-4">
-          Pass Rate: {(passRate * 100).toFixed(1)}% ({fairnessGates.filter(g => g.status === 'pass').length}/{fairnessGates.length})
+          Pass Rate: {(passRate * 100).toFixed(1)}% ({fairnessGates.filter((g: any) => g.status === 'pass').length}/{fairnessGates.length})
         </p>
 
         <div className="space-y-2">
-          {fairnessGates.map((gate) => (
+          {fairnessGates.map((gate: any) => (
             <div key={gate.id} className="flex items-center justify-between p-3 border border-gray-200 rounded">
               <div className="flex-1">
                 <span className="font-medium">{gate.window}</span>
