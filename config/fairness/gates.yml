@@ -1,0 +1,23 @@
+# Fairness gate configuration with statistical corrections
+air_min: 0.80
+tpr_gap_max: 0.05
+fpr_gap_max: 0.05
+calibration_parity_max: 0.05
+
+# Statistical testing parameters
+alpha: 0.05
+multiple_testing_correction: "bonferroni"
+min_sample_size: 50
+effect_size_threshold: 0.2
+
+# Protected groups for analysis
+protected_groups:
+  - "gender"
+  - "ethnicity"
+  - "age_group"
+
+# Gate failure actions
+on_failure:
+  block_deployment: true
+  require_human_review: true
+  escalation_email: "fairness-review@company.com"
