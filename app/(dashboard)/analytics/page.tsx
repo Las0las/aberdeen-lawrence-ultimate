@@ -1,5 +1,8 @@
 import { prisma } from '@/lib/db';
 
+// Force dynamic rendering for this page
+export const dynamic = 'force-dynamic';
+
 export default async function AnalyticsPage() {
   const fairnessGates = await prisma.fairnessGateRun.findMany({
     orderBy: { createdAt: 'desc' },

@@ -1,5 +1,8 @@
 import { prisma } from '@/lib/db';
 
+// Force dynamic rendering for this page
+export const dynamic = 'force-dynamic';
+
 export default async function EscalationsPage() {
   const escalations = await prisma.biasEvent.findMany({
     orderBy: { createdAt: 'desc' },
