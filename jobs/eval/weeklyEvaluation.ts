@@ -14,17 +14,17 @@ export async function runWeeklyEvaluation() {
     // Get predictions and outcomes for evaluation window
     const data = await getPredictionOutcomeData(window);
     
-    if (data.length < 50) {
-      console.warn(`Insufficient data for evaluation: ${data.length} samples`);
+    if ((data as any[]).length < 50) {
+      console.warn(`Insufficient data for evaluation: ${(data as any[]).length} samples`);
       await recordInsufficientDataResult(window);
       return;
     }
 
     // Compute model performance metrics
-    const performance = await computeModelPerformance(data);
+    const performance = await computeModelPerformance(data as any[]);
     
     // Compute fairness metrics with multiple testing correction
-    const fairnessResults = await computeFairnessMetrics(data);
+    const fairnessResults = await computeFairnessMetrics(data as any[]);
     
     // Store results
     await storeFairnessGateRun(window, fairnessResults, performance);
