@@ -99,3 +99,231 @@ model AuditLog {
   @@index([userId, createdAt])
   @@index([action, createdAt])
 }
+
+// ==========================================
+// AI-ATS Resume Parser & Document Management
+// ==========================================
+
+model Candidate {
+  id              String           @id @default(cuid())
+  email           String           @unique
+  firstName       String
+  lastName        String
+  phone           String?
+  location        String?
+  linkedinUrl     String?
+  portfolioUrl    String?
+  summary         String?          @db.Text
+  status          String           @default("active") // 'active'|'inactive'|'hired'|'rejected'
+  source          String?          // 'resume_upload'|'linkedin'|'referral'|'job_board'
+  tags            String[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  
+  // Relations
+  documents       Document[]
+  experiences     Experience[]
+  educations      Education[]
+  skills          CandidateSkill[]
+  applications    JobApplication[]
+  parsedProfiles  ParsedProfile[]
+  
+  @@index([email])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model Experience {
+  id           String    @id @default(cuid())
+  candidateId  String
+  candidate    Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  title        String
+  company      String
+  location     String?
+  startDate    DateTime?
+  endDate      DateTime?
+  current      Boolean   @default(false)
+  description  String?   @db.Text
+  highlights   String[]
+  order        Int       @default(0) // For DnD ordering
+  
+  @@index([candidateId])
+}
+
+model Education {
+  id           String    @id @default(cuid())
+  candidateId  String
+  candidate    Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  institution  String
+  degree       String?
+  field        String?
+  startDate    DateTime?
+  endDate      DateTime?
+  gpa          Float?
+  honors       String?
+  order        Int       @default(0) // For DnD ordering
+  
+  @@index([candidateId])
+}
+
+model CandidateSkill {
+  id           String    @id @default(cuid())
+  candidateId  String
+  candidate    Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  skillId      String
+  skill        Skill     @relation(fields: [skillId], references: [id])
+  proficiency  String?   // 'beginner'|'intermediate'|'advanced'|'expert'
+  yearsExp     Float?
+  verified     Boolean   @default(false)
+  
+  @@unique([candidateId, skillId])
+  @@index([candidateId])
+  @@index([skillId])
+}
+
+model Skill {
+  id          String           @id @default(cuid())
+  name        String           @unique
+  category    String?          // 'technical'|'soft'|'language'|'certification'
+  aliases     String[]         // Alternative names for matching
+  candidates  CandidateSkill[]
+  jobSkills   JobSkill[]
+  
+  @@index([name])
+  @@index([category])
+}
+
+model Document {
+  id           String    @id @default(cuid())
+  candidateId  String?
+  candidate    Candidate? @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  jobId        String?
+  job          Job?      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  filename     String
+  originalName String
+  mimeType     String
+  size         Int
+  storageKey   String    @unique // Path or key for file storage
+  docType      String    // 'resume'|'cover_letter'|'portfolio'|'certificate'|'job_description'|'other'
+  textContent  String?   @db.Text // Extracted text content
+  metadata     Json?     // Additional metadata from parsing
+  parsed       Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  
+  @@index([candidateId])
+  @@index([jobId])
+  @@index([docType])
+  @@index([createdAt])
+}
+
+model ParsedProfile {
+  id           String    @id @default(cuid())
+  candidateId  String
+  candidate    Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  documentId   String?   // Source document if applicable
+  rawData      Json      // Raw parsed data from AI
+  structuredData Json    // Structured/normalized data
+  confidence   Float     @db.DoublePrecision // Overall parsing confidence
+  parserVersion String   @default("v1.0")
+  createdAt    DateTime  @default(now())
+  
+  @@index([candidateId])
+  @@index([createdAt])
+}
+
+model Job {
+  id              String           @id @default(cuid())
+  title           String
+  department      String?
+  location        String?
+  locationType    String?          // 'remote'|'onsite'|'hybrid'
+  employmentType  String?          // 'full_time'|'part_time'|'contract'|'internship'
+  salaryMin       Int?
+  salaryMax       Int?
+  salaryCurrency  String?          @default("USD")
+  description     String?          @db.Text
+  requirements    String?          @db.Text
+  benefits        String?          @db.Text
+  status          String           @default("draft") // 'draft'|'open'|'paused'|'closed'|'filled'
+  priority        Int              @default(0)       // For DnD ordering in pipeline
+  publishedAt     DateTime?
+  closingDate     DateTime?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  
+  // Relations
+  sections        JobSection[]
+  skills          JobSkill[]
+  applications    JobApplication[]
+  documents       Document[]
+  
+  @@index([status])
+  @@index([department])
+  @@index([createdAt])
+}
+
+model JobSection {
+  id          String   @id @default(cuid())
+  jobId       String
+  job         Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  title       String
+  content     String   @db.Text
+  sectionType String   // 'responsibilities'|'requirements'|'qualifications'|'benefits'|'about'|'custom'
+  order       Int      @default(0) // For DnD ordering
+  
+  @@index([jobId])
+}
+
+model JobSkill {
+  id         String  @id @default(cuid())
+  jobId      String
+  job        Job     @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  skillId    String
+  skill      Skill   @relation(fields: [skillId], references: [id])
+  required   Boolean @default(true)
+  minYears   Float?
+  
+  @@unique([jobId, skillId])
+  @@index([jobId])
+  @@index([skillId])
+}
+
+model JobApplication {
+  id              String    @id @default(cuid())
+  jobId           String
+  job             Job       @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  candidateId     String
+  candidate       Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  status          String    @default("new") // 'new'|'screening'|'interview'|'offer'|'hired'|'rejected'
+  stage           String    @default("applied") // Kanban stage for DnD
+  stageOrder      Int       @default(0) // Order within stage for DnD
+  matchScore      Float?    @db.DoublePrecision // AI-calculated match score
+  matchDetails    Json?     // Detailed match breakdown
+  notes           String?   @db.Text
+  appliedAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@unique([jobId, candidateId])
+  @@index([jobId, status])
+  @@index([candidateId])
+  @@index([stage, stageOrder])
+}
+
+model NLQueryLog {
+  id            String   @id @default(cuid())
+  query         String   @db.Text
+  parsedIntent  String   // 'search_candidates'|'create_job'|'update_candidate'|'filter'|'report'
+  parsedParams  Json     // Extracted parameters
+  generatedSQL  String?  @db.Text // Generated database query (for audit)
+  resultCount   Int?
+  userId        String?
+  successful    Boolean  @default(true)
+  errorMessage  String?
+  executionMs   Int?
+  createdAt     DateTime @default(now())
+  
+  @@index([parsedIntent])
+  @@index([userId])
+  @@index([createdAt])
+}
