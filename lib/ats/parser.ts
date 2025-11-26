@@ -201,7 +201,7 @@ export function parseResumeText(text: string): {
 function extractSection(text: string, headers: string[]): string | null {
   const lines = text.split('\n');
   let inSection = false;
-  let sectionLines: string[] = [];
+  const sectionLines: string[] = [];
   
   const headerPattern = new RegExp(
     `^(?:${headers.join('|')})\\s*[:.]?\\s*$`,

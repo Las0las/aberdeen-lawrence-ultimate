@@ -1,5 +1,8 @@
 import { prisma } from '@/lib/db';
 
+// Force dynamic rendering since this page uses database queries
+export const dynamic = 'force-dynamic';
+
 export default async function EscalationsPage() {
   const escalations = await prisma.biasEvent.findMany({
     orderBy: { createdAt: 'desc' },
@@ -8,9 +11,9 @@ export default async function EscalationsPage() {
 
   const stats = {
     total: escalations.length,
-    pending: escalations.filter((e: any) => !e.adjudicated).length,
-    resolved: escalations.filter((e: any) => e.adjudicated).length,
-    highSeverity: escalations.filter((e: any) => e.severity >= 4).length
+    pending: escalations.filter((e) => !e.adjudicated).length,
+    resolved: escalations.filter((e) => e.adjudicated).length,
+    highSeverity: escalations.filter((e) => e.severity >= 4).length
   };
 
   return (
@@ -51,7 +54,7 @@ export default async function EscalationsPage() {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {escalations.map((event: any) => (
+            {escalations.map((event) => (
               <tr key={event.id} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                   {event.sessionId.substring(0, 8)}...

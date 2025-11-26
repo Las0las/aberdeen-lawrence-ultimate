@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { metrics } from '@/lib/metrics/prom';
 
-export async function POST(req: NextRequest) {
+export async function POST() {
   const startTime = Date.now();
   
   try {

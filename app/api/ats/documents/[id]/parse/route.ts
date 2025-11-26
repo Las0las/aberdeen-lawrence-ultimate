@@ -125,8 +125,8 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
         data: {
           candidateId: targetCandidateId,
           documentId: id,
-          rawData,
-          structuredData,
+          rawData: rawData as object,
+          structuredData: structuredData as object,
           confidence,
           parserVersion: 'v1.0',
         },

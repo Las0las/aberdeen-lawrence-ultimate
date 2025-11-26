@@ -154,7 +154,7 @@ export async function POST(req: NextRequest) {
       data: {
         query,
         parsedIntent: parseResult.intent,
-        parsedParams: parseResult.params,
+        parsedParams: parseResult.params as object,
         generatedSQL,
         resultCount,
         userId: userId || null,

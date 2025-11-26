@@ -40,7 +40,7 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
       try {
         const fileBuffer = await readStoredFile(document.storageKey);
         
-        return new NextResponse(fileBuffer, {
+        return new NextResponse(new Uint8Array(fileBuffer), {
           headers: {
             'Content-Type': document.mimeType,
             'Content-Disposition': `attachment; filename="${document.originalName}"`,
