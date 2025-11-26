@@ -1,5 +1,8 @@
 import { z } from 'zod';
 
+// Helper for optional URL fields that accept empty strings
+const optionalUrl = z.string().url().optional().or(z.literal(''));
+
 // Candidate schemas
 export const CandidateCreateSchema = z.object({
   email: z.string().email(),
@@ -7,8 +10,8 @@ export const CandidateCreateSchema = z.object({
   lastName: z.string().min(1).max(100),
   phone: z.string().optional(),
   location: z.string().optional(),
-  linkedinUrl: z.string().url().optional().or(z.literal('')),
-  portfolioUrl: z.string().url().optional().or(z.literal('')),
+  linkedinUrl: optionalUrl,
+  portfolioUrl: optionalUrl,
   summary: z.string().optional(),
   status: z.enum(['active', 'inactive', 'hired', 'rejected']).optional(),
   source: z.enum(['resume_upload', 'linkedin', 'referral', 'job_board', 'manual']).optional(),

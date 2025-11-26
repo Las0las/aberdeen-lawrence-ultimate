@@ -76,8 +76,13 @@ export async function readStoredFile(storageKey: string): Promise<Buffer> {
  */
 export async function deleteStoredFile(storageKey: string): Promise<void> {
   const filePath = getFilePath(storageKey);
-  if (existsSync(filePath)) {
+  try {
     await unlink(filePath);
+  } catch (error) {
+    // Ignore ENOENT error (file not found), rethrow others
+    if (error instanceof Error && 'code' in error && (error as NodeJS.ErrnoException).code !== 'ENOENT') {
+      throw error;
+    }
   }
 }
 

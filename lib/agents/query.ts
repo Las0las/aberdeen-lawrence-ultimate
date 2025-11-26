@@ -27,8 +27,8 @@ type QueryMessage = {
 
 async function* mockQuery(options: QueryOptions): AsyncGenerator<QueryMessage> {
   // In production, this would use the actual @anthropic-ai/claude-code package
-  // Using options to avoid unused variable warning
-  console.debug('Mock query called with prompt length:', options.prompt.length);
+  // Suppress unused warning by using void
+  void options.prompt;
   yield {
     type: 'result',
     result: 'Agent functionality requires @anthropic-ai/claude-code package',
