@@ -1,5 +1,8 @@
 import { prisma } from '@/lib/db';
 
+// Force dynamic rendering since this page uses database queries
+export const dynamic = 'force-dynamic';
+
 export default async function AnalyticsPage() {
   const fairnessGates = await prisma.fairnessGateRun.findMany({
     orderBy: { createdAt: 'desc' },
@@ -7,7 +10,7 @@ export default async function AnalyticsPage() {
   });
 
   const latestGate = fairnessGates[0];
-  const passRate = fairnessGates.filter((g: any) => g.status === 'pass').length / fairnessGates.length;
+  const passRate = fairnessGates.filter((g) => g.status === 'pass').length / fairnessGates.length;
 
   return (
     <div className="container mx-auto p-8">
