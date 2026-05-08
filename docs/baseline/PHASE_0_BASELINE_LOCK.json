@@ -1,0 +1,110 @@
+{
+  "phase": 0,
+  "phase_name": "Baseline Lock",
+  "status": "LOCKED_WITH_LIMITED_REMOTE_INSPECTION",
+  "repository": "Las0las/aberdeen-lawrence-ultimate",
+  "default_branch": "main",
+  "locked_at_utc": "2026-05-08T00:00:00Z",
+  "execution_laws": [
+    "additive_only",
+    "no_destructive_edits",
+    "no_speculative_refactors",
+    "no_silent_renames",
+    "no_dependency_additions",
+    "no_direct_ui_to_database_mutation",
+    "no_business_mutation_outside_routeAction",
+    "no_governed_mutation_outside_decisionEnvelope_policyGates_approvedRpc_eventSpine",
+    "no_placeholders",
+    "no_pseudocode"
+  ],
+  "inspected_files": [
+    {
+      "path": "README.md",
+      "blob_sha": "75d4d879561bd56c709d395362405d349e3366c9",
+      "source": "fetch_file"
+    },
+    {
+      "path": "package.json",
+      "blob_sha": "5ecc5b6621bbe7107192d15742493bffc9f902db",
+      "source": "fetch_file"
+    },
+    {
+      "path": "tsconfig.json",
+      "blob_sha": "434c2c65021dd440bd410e9b005c8bc00b0ae24f",
+      "source": "fetch_file"
+    },
+    {
+      "path": "next.config.js",
+      "blob_sha": "507d98ea5cf4b125fa7d7317a4ba0c6455924fd3",
+      "source": "fetch_file"
+    },
+    {
+      "path": "app/api/agents/run/route.ts",
+      "blob_sha": "3d989fa08441e0160810f3e9e5f392e04a66732d",
+      "source": "fetch_file"
+    },
+    {
+      "path": "app/api/agents/metrics/route.ts",
+      "blob_sha": "0e363c8dc8050d5bac2f52e8518abb7ea0c417f9",
+      "source": "fetch_file"
+    },
+    {
+      "path": "lib/agents/query.ts",
+      "blob_sha": "dd8b191b5351fc3d43a4a0c9709fd3eaed826ff3",
+      "source": "fetch_file"
+    },
+    {
+      "path": "lib/agents/metrics.ts",
+      "blob_sha": "192c2be225e561e98f2606a8b2ef9ed534eb5017",
+      "source": "fetch_file"
+    },
+    {
+      "path": "lib/agents/logger.ts",
+      "blob_sha": "7e42a921b0f7d481f4867f7bf493a65a3e1f4d00",
+      "source": "fetch_file"
+    },
+    {
+      "path": "prisma/schema.prisma",
+      "blob_sha": "112f66f6bf2bdbef21841fced8e319f98f727214",
+      "source": "fetch_file"
+    }
+  ],
+  "known_baseline_facts": {
+    "package_name": "aberdeen-lawrence-ultimate",
+    "package_version": "1.0.0",
+    "framework": "Next.js App Router",
+    "next_major": 14,
+    "react_major": 18,
+    "typescript_strict": true,
+    "database_tooling": "Prisma/PostgreSQL",
+    "existing_runtime_scope": "basic agent runtime with agent run and metrics endpoints",
+    "existing_constitutional_runtime": "not_present_in_inspected_files"
+  },
+  "phase_0_gate": {
+    "phase_1_allowed": true,
+    "condition": "Phase 1 may begin only as additive constitutional contract files; no existing runtime may be assumed beyond this manifest.",
+    "fail_closed_rule": "If any inspected blob SHA differs before Phase 1, stop and regenerate Phase 0 baseline lock."
+  },
+  "deterministic_hashes": {
+    "baseline_manifest_sha256_algorithm": "sha256(sorted(path + ':' + blob_sha).join('\\n'))",
+    "baseline_manifest_sha256": "4ca066c712dfe6da0e71bfe62f013c483298fef714f69b399b8b3b9fae9127aa"
+  },
+  "drift_risks": [
+    {
+      "risk": "Repository is small and does not yet contain the canonical constitutional runtime.",
+      "closure": "Baseline explicitly marks constitutional runtime as absent; later phases must add it rather than refactor assumed code."
+    },
+    {
+      "risk": "Remote connector inspection cannot execute local commands or enumerate every file with a full git tree in this session.",
+      "closure": "Manifest locks all files that were directly fetched and inspected; any later local execution must reconcile full tree before mutation."
+    },
+    {
+      "risk": "Existing /api/agents/run endpoint can execute agent work and accepts caller tool options.",
+      "closure": "No mutation performed in Phase 0; Phase 1+ must wrap governed execution boundaries before business mutations are introduced."
+    }
+  ],
+  "remaining_blockers": [
+    "Remote CI/typecheck/test execution was not available through the GitHub connector in this session.",
+    "Full recursive tree enumeration was unavailable through the connector; only directly fetched files are locked here."
+  ]
+}
