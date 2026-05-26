@@ -15,7 +15,7 @@ interface SlotPickerProps {
   onReserve: (slotId: string) => Promise<void>;
 }
 
-export function SlotPicker({ slots, candidateId, onReserve }: SlotPickerProps) {
+export function SlotPicker({ slots, candidateId: _candidateId, onReserve }: SlotPickerProps) {
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -28,8 +28,8 @@ export function SlotPicker({ slots, candidateId, onReserve }: SlotPickerProps) {
     
     try {
       await onReserve(selectedSlot);
-    } catch (err: any) {
-      setError(err.message || 'Failed to reserve slot');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to reserve slot');
     } finally {
       setLoading(false);
     }

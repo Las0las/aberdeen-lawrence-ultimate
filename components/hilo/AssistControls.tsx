@@ -2,12 +2,17 @@
 
 import { useState } from 'react';
 
-interface AssistControlsProps {
-  sessionId: string;
-  onEscalate: (severity: number, eventType: string, details: any) => Promise<void>;
+interface BiasDetails {
+  notes: string;
+  timestamp: string;
 }
 
-export function AssistControls({ sessionId, onEscalate }: AssistControlsProps) {
+interface AssistControlsProps {
+  sessionId: string;
+  onEscalate: (severity: number, eventType: string, details: BiasDetails) => Promise<void>;
+}
+
+export function AssistControls({ sessionId: _sessionId, onEscalate }: AssistControlsProps) {
   const [showEscalation, setShowEscalation] = useState(false);
   const [severity, setSeverity] = useState(3);
   const [eventType, setEventType] = useState<'language_bias' | 'demographic_bias' | 'cognitive_bias'>('language_bias');
@@ -44,7 +49,7 @@ export function AssistControls({ sessionId, onEscalate }: AssistControlsProps) {
             <label className="block text-sm font-medium mb-1">Event Type</label>
             <select
               value={eventType}
-              onChange={(e) => setEventType(e.target.value as any)}
+              onChange={(e) => setEventType(e.target.value as 'language_bias' | 'demographic_bias' | 'cognitive_bias')}
               className="w-full p-2 border border-gray-300 rounded"
             >
               <option value="language_bias">Language Bias</option>

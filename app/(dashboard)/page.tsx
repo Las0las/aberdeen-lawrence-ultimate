@@ -2,9 +2,17 @@ import { prisma } from '@/lib/db';
 import { CalibrationPlot } from '@/components/metrics/CalibrationPlot';
 import { LiftChart } from '@/components/metrics/LiftChart';
 
+// Force dynamic rendering since this page uses database queries
+export const dynamic = 'force-dynamic';
+
+interface PredictionData {
+  pSuccess: number;
+  retained12m: boolean;
+}
+
 export default async function DashboardPage() {
   // Get recent predictions and outcomes for visualization
-  const recentData = await prisma.$queryRaw<any[]>`
+  const recentData = await prisma.$queryRaw<PredictionData[]>`
     SELECT 
       p.pSuccess,
       o.retained12m
@@ -14,8 +22,8 @@ export default async function DashboardPage() {
     LIMIT 100
   `;
 
-  const predictions = recentData.map((d: any) => d.pSuccess);
-  const outcomes = recentData.map((d: any) => d.retained12m ? 1 : 0);
+  const predictions = recentData.map((d) => d.pSuccess);
+  const outcomes: number[] = recentData.map((d) => d.retained12m ? 1 : 0);
 
   return (
     <div className="container mx-auto p-8">
@@ -35,14 +43,14 @@ export default async function DashboardPage() {
         <div className="p-6 bg-white rounded-lg shadow">
           <h3 className="text-lg font-semibold mb-2">Avg Prediction</h3>
           <p className="text-3xl font-bold text-green-600">
-            {(predictions.reduce((a: number, b: number) => a + b, 0) / predictions.length).toFixed(2)}
+            {predictions.length > 0 ? (predictions.reduce((a, b) => a + b, 0) / predictions.length).toFixed(2) : 'N/A'}
           </p>
         </div>
         
         <div className="p-6 bg-white rounded-lg shadow">
           <h3 className="text-lg font-semibold mb-2">Actual Success Rate</h3>
           <p className="text-3xl font-bold text-purple-600">
-            {(outcomes.reduce((a: number, b: number) => a + b, 0) / outcomes.length).toFixed(2)}
+            {outcomes.length > 0 ? (outcomes.reduce((a, b) => a + b, 0) / outcomes.length).toFixed(2) : 'N/A'}
           </p>
         </div>
       </div>

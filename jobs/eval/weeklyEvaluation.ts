@@ -41,8 +41,18 @@ export async function runWeeklyEvaluation() {
   }
 }
 
-async function getPredictionOutcomeData(window: EvaluationWindow) {
-  return await prisma.$queryRaw`
+interface PredictionOutcome {
+  candidateId: string;
+  pSuccess: number;
+  confidence: number;
+  groupKey: string | null;
+  retained12m: boolean;
+  perfScore: number | null;
+  roleFamily: string;
+}
+
+async function getPredictionOutcomeData(window: EvaluationWindow): Promise<PredictionOutcome[]> {
+  return await prisma.$queryRaw<PredictionOutcome[]>`
     SELECT 
       p.candidateId,
       p.pSuccess,
