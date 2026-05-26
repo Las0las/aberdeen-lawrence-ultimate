@@ -2,6 +2,9 @@ import { prisma } from '@/lib/db';
 import { CalibrationPlot } from '@/components/metrics/CalibrationPlot';
 import { LiftChart } from '@/components/metrics/LiftChart';
 
+// Force dynamic rendering for this page
+export const dynamic = 'force-dynamic';
+
 export default async function DashboardPage() {
   // Get recent predictions and outcomes for visualization
   const recentData = await prisma.$queryRaw<any[]>`

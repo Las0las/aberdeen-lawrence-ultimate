@@ -30,30 +30,35 @@ export async function runAgent(opts: AgentOptions): Promise<AgentRunSummary> {
   let summary: AgentRunSummary = { result: "" };
 
   try {
+    const options: any = {
+      maxTurns: opts.maxTurns ?? 4,
+      permissionMode: opts.permissionMode ?? "plan",
+    };
+    
+    // Only add optional fields if they exist
+    if (opts.systemPrompt) options.systemPrompt = opts.systemPrompt;
+    if (opts.appendSystemPrompt) options.appendSystemPrompt = opts.appendSystemPrompt;
+    if (opts.allowedTools) options.allowedTools = opts.allowedTools;
+    if (opts.mcpConfig) options.mcpConfig = opts.mcpConfig;
+    if (opts.permissionPromptTool) options.permissionPromptTool = opts.permissionPromptTool;
+    if (opts.continueSession !== undefined) options.continueSession = opts.continueSession;
+    if (opts.resumeSessionId) options.resumeSessionId = opts.resumeSessionId;
+    
     for await (const message of query({
       prompt: opts.prompt,
-      options: {
-        maxTurns: opts.maxTurns ?? 4,
-        systemPrompt: opts.systemPrompt,
-        appendSystemPrompt: opts.appendSystemPrompt,
-        allowedTools: opts.allowedTools,
-        mcpConfig: opts.mcpConfig,
-        permissionPromptTool: opts.permissionPromptTool,
-        permissionMode: opts.permissionMode ?? "plan",
-        continueSession: opts.continueSession,
-        resumeSessionId: opts.resumeSessionId,
-      },
+      options,
     })) {
       if (message.type === "result") {
+        const msg = message as any;
         summary = {
-          result: message.result ?? "",
-          duration_ms: message.duration_ms ?? Date.now() - start,
-          duration_api_ms: message.duration_api_ms,
-          total_cost_usd: message.total_cost_usd,
-          session_id: message.session_id,
-          num_turns: message.num_turns,
+          result: msg.result ?? msg.content ?? "",
+          duration_ms: msg.duration_ms ?? Date.now() - start,
+          duration_api_ms: msg.duration_api_ms,
+          total_cost_usd: msg.total_cost_usd,
+          session_id: msg.session_id,
+          num_turns: msg.num_turns,
         };
-        metricTurns.inc({ agent: opts.agentName }, message.num_turns || 0);
+        metricTurns.inc({ agent: opts.agentName }, msg.num_turns || 0);
         metricLatency.observe({ agent: opts.agentName }, summary.duration_ms || 0);
         logger.info({
           msg: "agent_run_complete",
